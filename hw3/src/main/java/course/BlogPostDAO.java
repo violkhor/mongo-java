@@ -1,5 +1,3 @@
-
-
 package course;
 
 import com.mongodb.BasicDBObject;
@@ -22,7 +20,7 @@ public class BlogPostDAO {
     // Return a single post corresponding to a permalink
     public DBObject findByPermalink(String permalink) {
 
-        DBObject post =  new BasicDBObject();
+        DBObject post;
         QueryBuilder queryBuilder = QueryBuilder.start("permalink").is(permalink);
         post = postsCollection.find(queryBuilder.get()).next();
         return post;
@@ -35,7 +33,7 @@ public class BlogPostDAO {
         List<DBObject> posts = null;
         // XXX HW 3.2,  Work Here
         // Return a list of DBObjects, each one a post from the posts collection
-        posts = postsCollection.find(new BasicDBObject()).sort(new BasicDBObject("date",-1)).toArray();
+        posts = postsCollection.find(new BasicDBObject()).sort(new BasicDBObject("date", -1)).toArray();
         return posts;
     }
 
@@ -75,15 +73,7 @@ public class BlogPostDAO {
     }
 
 
-
-
-   // White space to protect the innocent
-
-
-
-
-
-
+    // White space to protect the innocent
 
 
     // Append a comment to a blog post
@@ -95,8 +85,15 @@ public class BlogPostDAO {
         // - email is optional and may come in NULL. Check for that.
         // - best solution uses an update command to the database and a suitable
         //   operator to append the comment on to any existing list of comments
+        DBObject comment = new BasicDBObject();
+        comment.put("author", name);
+        comment.put("name", name);
+        comment.put("body", body);
+        if (email != null) {
+            comment.put("email", email);
+        }
 
-
+        postsCollection.update(new BasicDBObject("permalink",permalink),new BasicDBObject("$push", new BasicDBObject("comments",comment)));
 
     }
 
